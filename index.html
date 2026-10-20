@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<script>
+  (function() {
+    var GA_ID = 'G-3905F24F8L';
+    var isLocalDev = ['localhost', '127.0.0.1', ''].includes(location.hostname);
+    if (isLocalDev) return;
+    try { if (/[?&]no_ga=0/.test(location.search)) localStorage.removeItem('no_ga'); if (/[?&]no_ga=1/.test(location.search)) localStorage.setItem('no_ga', '1'); if (localStorage.getItem('no_ga') === '1') return; } catch (e) {}
+    var gaQ = new URLSearchParams(location.search); if (gaQ.get('obs') === '1' || gaQ.get('no_ga') === '1') return;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', GA_ID);
+    document.addEventListener('click', function(e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href*="booth.pm"]') : null;
+      if (!a) return;
+      gtag('event', 'booth_click', { link_url: a.href, link_id: a.id || '', link_text: (a.textContent || '').trim().slice(0, 40) });
+    });
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="回る当番表を無料で作成・印刷(登録不要)。名前と仕事を入れるだけで、割ピンで留めてくるくる回す円形の当番表(外側の円と内側の円)と、毎週・毎日の当番がわかるローテーション表ができます。そうじ当番・給食当番・家事の分担に。人数が多いときは「おやすみ」を自動で入れます。A4・A3。">
+<link rel="canonical" href="https://uuhai0625.github.io/touban-hyo/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="回る当番表メーカー|円形の当番表とローテーション表を無料で作成・印刷">
+<meta property="og:description" content="回る当番表を無料で作成・印刷(登録不要)。名前と仕事を入れるだけで、割ピンで留めてくるくる回す円形の当番表(外側の円と内側の円)と、毎週・毎日の当番がわかるローテーション表ができます。そうじ当番・給食当番・家事の分担に。人数が多いときは「おやすみ」を自動で入れます。A4・A3。">
+<meta property="og:url" content="https://uuhai0625.github.io/touban-hyo/">
+<meta property="og:image" content="https://uuhai0625.github.io/touban-hyo/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<title>回る当番表メーカー|円形の当番表とローテーション表を無料で作成・印刷</title>
+<style>
+  :root {
+    --bg: #f3f6f4;
+    --panel: #ffffff;
+    --border: #d9e2dc;
+    --field-border: #4d5a52;
+    --text: #1f2a24;
+    --muted: #4f5d55;
+    --accent: #2f7a57;
+    --accent-dark: #1f5a3f;
+    --ng: #b3261e;
+    --locked: #c5d2ca;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+  header { background: var(--accent-dark); color: #fff; padding: 24px 20px 18px; text-align: center; }
+  header h1 { margin: 0 0 6px; font-size: 1.35rem; }
+  header p { margin: 0; font-size: .9rem; }
+  main { max-width: 1120px; margin: 0 auto; padding: 22px 16px 50px; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); grid-template-areas: "kind pv" "member pv" "design pv"; column-gap: 18px; align-items: start; }
+  .layout > * { min-width: 0; }
+  #kind-card { grid-area: kind; } #member-card { grid-area: member; } #design-card { grid-area: design; }
+  #pv-card { grid-area: pv; position: sticky; top: 12px; }
+  section.card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section.card h2 { margin: 0 0 6px; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .fine { color: var(--muted); font-size: .86rem; margin: 8px 0 0; }
+  .badge { display: inline-block; font-size: .7rem; padding: 2px 8px; border-radius: 999px; background: #e3f3e9; color: #1f5a3f; font-weight: bold; }
+  .hidden { display: none !important; }
+  label.field, div.field, fieldset.field { display: block; margin-bottom: 12px; }
+  fieldset.field { border: 0; padding: 0; margin-left: 0; margin-right: 0; min-width: 0; }
+  fieldset.field legend { padding: 0; }
+  .lbl { font-size: .9rem; font-weight: bold; display: block; }
+  .hint { font-size: .875rem; color: var(--muted); font-weight: normal; display: block; margin-top: 2px; }
+  select, input[type=text], input[type=date], textarea { margin-top: 5px; min-height: 44px; border: 1px solid var(--field-border); border-radius: 8px; font-size: 1rem; font-family: inherit; background: #fff; color: var(--text); width: 100%; padding: 8px 10px; }
+  textarea { min-height: 150px; resize: vertical; line-height: 1.5; }
+  .row2 { display: flex; gap: 12px; }
+  .row2 > * { flex: 1; min-width: 0; }
+  .seg { display: flex; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+  .seg label { flex: 1; min-width: 140px; display: flex; align-items: center; gap: 8px; min-height: 44px; border: 1px solid var(--field-border); border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: .92rem; background: #fff; }
+  .seg input { width: 20px; height: 20px; accent-color: var(--accent); flex: none; }
+  .seg label:has(input:checked) { border-color: var(--accent); background: #eaf5ee; font-weight: bold; }
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .btn { min-height: 44px; min-width: 44px; padding: 9px 16px; border-radius: 8px; font-size: .9rem; cursor: pointer; border: 1px solid var(--field-border); background: #fff; color: var(--text); font-family: inherit; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: bold; }
+  .btn.small { min-height: 44px; padding: 6px 12px; font-size: .85rem; }
+  .btn:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid #2560c4; outline-offset: 2px; }
+  .btn-row .btn { flex: 1; }
+  .status { font-size: .88rem; color: var(--muted); margin-top: 6px; min-height: 1.2em; }
+  .status.err { color: var(--ng); font-weight: bold; }
+  .pv { border: 1px solid var(--border); border-radius: 8px; background: #e4eae6; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 12px; max-height: min(760px, 80vh); overflow-y: auto; }
+  .pv canvas { max-width: 100%; height: auto; display: block; box-shadow: 0 1px 4px rgba(0,0,0,.25); background: #fff; }
+  .pv .cap { font-size: .8rem; color: var(--muted); margin: 0 0 -6px; }
+  .guide { font-size: .9rem; }
+  .guide h3 { font-size: .95rem; margin: 14px 0 4px; }
+  .guide ul, .guide ol { padding-left: 1.3em; margin: 6px 0; }
+  .guide li { margin: 4px 0; }
+  .locked-panel { border: 1px dashed var(--locked); border-radius: 10px; padding: 16px; text-align: center; color: var(--muted); background: #f8fbf9; }
+  .locked-panel .lead { color: var(--text); font-weight: bold; }
+  .locked-panel .feat-list { text-align: left; max-width: 620px; margin: 10px auto; font-size: .88rem; padding-left: 1.2em; }
+  .buy-btn { display: inline-block; margin-top: 8px; background: var(--accent-dark); color: #fff; font-weight: bold; padding: 11px 22px; border-radius: 999px; text-decoration: none; font-size: .9rem; }
+  footer { max-width: 1120px; margin: 0 auto; padding: 0 16px 40px; font-size: .84rem; color: var(--muted); }
+  footer p { margin: 10px 0; }
+  footer a { color: var(--muted); }
+  #printArea { display: none; }
+  .jump { display: none; margin-top: 6px; font-size: .95rem; padding: 10px 0; }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kind" "member" "design" "pv"; }
+    #pv-card { position: static; }
+    .pv { max-height: none; }
+    .jump { display: inline-block; }
+  }
+  @media (max-width: 600px) {
+    .row2 { flex-direction: column; gap: 0; }
+    .row2.btns { flex-direction: row; gap: 8px; }
+    section.card { padding: 16px 12px; }
+  }
+  @media print {
+    body.printing > * { display: none !important; }
+    body.printing > #printArea { display: block !important; }
+    #printArea img { display: block; break-after: page; }
+    #printArea img:last-child { break-after: auto; }
+  }
+</style>
+<style id="pageStyle">@page { size: A4 portrait; margin: 0; }</style>
+<!--ANSHIN_CSS_START--><style>:root{--anshin-w:1088px;--anshin-pad:16px}.anshin-strip,.anshin{box-sizing:border-box;width:min(var(--anshin-w),calc(100% - 2 * var(--anshin-pad)));margin-left:auto;margin-right:auto}.anshin-strip{list-style:none;margin-top:10px;margin-bottom:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:.8rem;line-height:1.5}.anshin-strip li{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border:1px solid rgba(20,120,90,.45);border-radius:999px;background:rgba(20,120,90,.07)}.anshin-strip li.anshin-more{border:0;background:none;padding:3px 2px}.anshin-strip a,.anshin a{color:inherit}.anshin{margin-top:18px;margin-bottom:18px;padding:14px 18px;border:1px solid rgba(20,120,90,.45);border-radius:10px;background:rgba(20,120,90,.05);font-size:.86rem;line-height:1.7}.anshin h2{font-size:1rem;margin:0 0 6px}.anshin p{margin:0 0 6px}.anshin ul{margin:0;padding-left:1.2em}.anshin li{margin:3px 0}.anshin details{margin-top:6px}.anshin summary{cursor:pointer;font-weight:bold}.anshin .anshin-meta{margin:8px 0 0;font-size:.8rem;opacity:.85}@media print{.anshin,.anshin-strip{display:none!important}}</style><!--ANSHIN_CSS_END-->
+<!--UPSELL_CSS_START--><style>.upsell-top{box-sizing:border-box;width:min(var(--anshin-w,880px),calc(100% - 2 * var(--anshin-pad,16px)));margin:12px auto 0;font-size:.85rem;line-height:1.6}.upsell-top a{color:inherit}.upsell-assure{list-style:none;margin:12px 0 10px;padding:0;display:flex;flex-wrap:wrap;gap:6px 8px;font-size:.8rem;line-height:1.5}.upsell-assure li{padding:3px 10px;border:1px solid rgba(20,120,90,.45);border-radius:12px;background:rgba(20,120,90,.06)}.upsell-terms{margin:8px 0 0;font-size:.78rem;line-height:1.6;opacity:.85}.upsell-toast{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:9999;box-sizing:border-box;width:min(520px,calc(100% - 24px));padding:14px 56px 14px 16px;border-radius:12px;background:#fff;color:#222;border:1px solid #c9c2d6;box-shadow:0 6px 24px rgba(0,0,0,.18);font-size:.88rem;line-height:1.6}.upsell-toast p{margin:0 0 6px;font-weight:bold}.upsell-toast ul{margin:0 0 10px;padding-left:1.2em}.upsell-toast li{margin:2px 0}.upsell-toast .upsell-note{display:block;margin-top:6px;font-size:.75rem;color:#555}.upsell-toast .upsell-go{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:8px;background:#c9283e;color:#fff;font-weight:bold;text-decoration:none}.upsell-toast .upsell-go:focus-visible,.upsell-toast .upsell-x:focus-visible{outline:3px solid #2560c4;outline-offset:2px}.upsell-toast .upsell-x{position:absolute;top:4px;right:4px;width:44px;height:44px;border:0;border-radius:8px;background:transparent;color:#555;font-size:1.3rem;line-height:1;cursor:pointer}.upsell-inline{white-space:nowrap;color:inherit;text-decoration:underline;text-underline-offset:2px}@media print{.upsell-top,.upsell-assure,.upsell-terms,.upsell-toast,.upsell-inline{display:none!important}}</style><!--UPSELL_CSS_END-->
+</head>
+<body>
+
+<header>
+  <h1>回る当番表メーカー</h1>
+  <p>名前と仕事を入れるだけで、くるくる回す円形の当番表(外側の円と内側の円)と、毎週(毎日)の当番が一目でわかるローテーション表を作れます。そうじ当番・給食当番・家事の分担に。印刷して切って、割ピンで留めるだけ。登録不要・スマホでも使えます</p>
+</header>
+<!--ANSHIN_STRIP_START-->
+<ul class="anshin-strip" aria-label="データの扱い">
+  <li><span aria-hidden="true">✓</span> 入力内容はこの端末の中だけで処理</li>
+  <li><span aria-hidden="true">✓</span> 登録・ログイン不要</li>
+  <li><span aria-hidden="true">✓</span> 仕組みを公開中</li>
+  <li class="anshin-more"><a href="#anshin">データの扱いをくわしく</a></li>
+</ul>
+<!--ANSHIN_STRIP_END-->
+<!--UPSELL_TOP_START--><p class="upsell-top no-print" id="upsellTop">このページは無料のまま使えます。機能を増やしたい方は <a href="#pro-section">買い切り版(¥100・1回払い)<span aria-hidden="true"> ↓</span></a></p><!--UPSELL_TOP_END-->
+
+<main>
+<div class="layout">
+
+  <section class="card" id="kind-card">
+    <h2>① 作るもの</h2>
+    <fieldset class="field">
+      <legend class="lbl">作るもの</legend>
+      <div class="seg">
+        <label><input type="radio" name="mode" value="circle" checked> 回る当番表(円形)</label>
+        <label><input type="radio" name="mode" value="table"> ローテーション表(表)</label>
+      </div>
+    </fieldset>
+    <label class="field"><span class="lbl">当番表の名前</span><input type="text" id="inTitle" maxlength="14" placeholder="例: そうじ当番" aria-describedby="titleHint"><span class="hint" id="titleHint">7文字くらいまでが読みやすい大きさです</span></label>
+    <div id="circleOpts">
+      <label class="field"><span class="lbl">大きさ</span>
+        <select id="inSize" aria-describedby="sizeHint">
+          <option value="a4big" selected>大きめ(A4に1つずつ・2枚)</option>
+          <option value="a4small">小さめ(A4に2つまとめて・1枚)</option>
+          <option value="a3big">教室用(A3に1つずつ・2枚)</option>
+        </select>
+        <span class="hint" id="sizeHint">外側の円(仕事)と内側の円(名前)を印刷して、切って重ねます。A3は、画像で保存すればA3に対応したコンビニのプリントでも印刷できます</span>
+      </label>
+    </div>
+    <div id="tableOpts" class="hidden">
+      <div class="row2">
+        <label class="field"><span class="lbl">回す間隔</span>
+          <select id="inUnit">
+            <option value="week" selected>1週間ごと</option>
+            <option value="weekday">1日ごと(土日は飛ばす・祝日は飛ばさない)</option>
+            <option value="day">1日ごと(毎日)</option>
+            <option value="turn">回ごと(日付なし)</option>
+          </select>
+        </label>
+        <label class="field" id="startField"><span class="lbl">始まりの日</span><input type="date" id="inStart"></label>
+      </div>
+      <label class="field"><span class="lbl">何回分</span><select id="inCount" aria-describedby="countNote"></select><span class="hint" id="countNote"></span></label>
+      
+    </div>
+  </section>
+
+  <section class="card" id="member-card">
+    <h2>② 名前と仕事</h2>
+    <div class="row2">
+      <label class="field"><span class="lbl">名前・班(1行に1つ)</span><textarea id="inNames" spellcheck="false" placeholder="例:&#10;1班&#10;2班&#10;3班" aria-describedby="namesHint"></textarea><span class="hint" id="namesHint"></span></label>
+      <div class="field">
+        <label for="inTasks" class="lbl">仕事(1行に1つ)</label><textarea id="inTasks" spellcheck="false" aria-describedby="listNote"></textarea>
+        <select id="inPreset" aria-label="仕事の例を入れる">
+          <option value="">仕事の例を入れる</option>
+          <option value="clean">そうじ(教室)</option>
+          <option value="kyushoku">給食当番</option>
+          <option value="home">家事の分担</option>
+          <option value="office">職場</option>
+          <option value="role">一人一役(係の当番)</option>
+        </select>
+      </div>
+    </div>
+    
+    <p class="status" id="listNote"></p>
+    <p class="status" id="warnNote" aria-live="polite"></p>
+    <div class="btn-row"><button type="button" class="btn small" id="clearBtn">入力を全部消す</button></div>
+    
+    <a class="jump" href="#pv-card">見本と印刷へ ↓</a>
+  </section>
+
+  <section class="card" id="design-card">
+    <h2>③ 色と文字</h2>
+    <div class="row2">
+      <label class="field"><span class="lbl">色</span>
+        <select id="inColor"><option value="color" selected>カラフル</option><option value="soft">うすい色</option><option value="mono">白黒(インクを節約)</option></select>
+      </label>
+      <label class="field"><span class="lbl">文字の形</span>
+        <select id="inFont"><option value="r" selected>まるい</option><option value="g">ゴシック</option><option value="k">教科書体(パソコンに入っていれば)</option></select>
+      </label>
+    </div>
+    <a class="jump" href="#pv-card">見本と印刷へ ↓</a>
+  </section>
+
+  <section class="card" id="pv-card">
+    <h2>④ 見本を確かめて印刷</h2>
+    <div class="pv" id="pv"></div>
+    <div class="status" id="outSt" role="status"></div>
+    <div class="btn-row">
+      <button type="button" class="btn primary" id="printBtn">家のプリンターで印刷</button>
+      <button type="button" class="btn" id="pngBtn">画像で保存(コンビニ印刷にも)</button>
+    </div>
+    <p class="fine">倍率「100%」(「用紙に合わせる」はオフ)で印刷します。回る当番表の2枚は同じ設定で印刷してください(同じ設定なら、少し縮んでも2つの円はぴったり合います)。厚紙や画用紙に印刷するか、印刷した紙を厚紙に貼ると長持ちします。</p>
+    <a class="jump" href="#member-card">↑ 名前と仕事に戻る</a>
+  </section>
+
+</div>
+
+  <section class="card" id="pro-section">
+    <h2>クラス全員で回す当番表・長いローテーション表 <span class="badge">買い切り版 ¥100(税込)</span></h2>
+    <div class="locked-panel">
+      <p class="lead">クラス全員を、2人ずつ・班ごとに回せます。</p>
+      <p>このページの機能は無料でそのまま使えます。買い切り版(ダウンロード購入)では、次の機能が増えます:</p>
+      <ul class="feat-list">
+        <li><strong>1つの仕事を2人ずつ・班ごとに</strong>: 名前を入れた順に2〜6人ずつの組にして回します(例: 40人・8つの仕事なら5人ずつ)。名前は40人まで(無料版は8つまで)</li>
+        <li><strong>休みにする日を飛ばす</strong>: 祝日・行事の日を入れると、ローテーション表でその日(その週)を飛ばします</li>
+        <li><strong>ローテーション表を60回分まで</strong>: 1週間ごとなら60週分、1日ごとなら約3か月分を、数ページに分けて続けて印刷(無料版は8回分まで)</li>
+        <li><strong>名前をつけて保存</strong>: クラスごと・係ごとの当番表を50件まで保存して、いつでも呼び出し</li>
+        <li><strong>画像はZIPでまとめて保存・ツール名が入りません</strong>(無料版は1枚ずつ保存、用紙の右下に小さくツール名が入ります)</li>
+        <li><strong>パソコンで使うHTMLファイルです</strong>(スマホでの動作は保証していません)。ダウンロードしたファイルなので、ネットにつながっていなくても開けます</li>
+      </ul>
+<!--UPSELL_ASSURE_START--><ul class="upsell-assure" aria-label="買い切り版について"><li>¥100(税込)の1回払い・月額なし</li><li>パソコン向けのHTMLファイル(スマホでは開けない機種あり)</li><li>ネットにつながっていなくても動く</li><li>BOOTHで購入(クレジットカード・楽天ペイは手数料なし、コンビニ・銀行払いは別途手数料)</li></ul><!--UPSELL_ASSURE_END-->
+      <a class="buy-btn" href="https://uuhai0625.booth.pm/items/9018570" id="buyLink" target="_blank" rel="noopener">パソコン用の買い切り版を見る(BOOTH・新しいタブ)</a><!--UPSELL_TERMS_START--><p class="upsell-terms">販売者の情報・返品などの販売条件は、BOOTHの商品ページでご確認ください。BOOTHでの購入にはpixivのアカウントが必要です。</p><!--UPSELL_TERMS_END-->
+    </div>
+  </section>
+
+  <section class="card guide" id="guide">
+    <h2>回る当番表の作り方</h2>
+    <ol>
+      <li>「回る当番表(円形)」で名前と仕事を入れて印刷します。外側の円に仕事、内側の円に名前が入ります。</li>
+      <li>それぞれ、いちばん外の太い線に沿ってはさみで切ります。外側の円の点線は、内側の円を重ねる目安なので切りません。</li>
+      <li>内側の円を外側の円の上に重ね、2つの「★」を合わせて、区切りの線もそろえます(これが1回目の並びです)。</li>
+      <li>まん中の「+」の所に、目打ちやキリで小さな穴をあけ(子どもが作るときは大人があけてください)、割ピン(文具の「割ピン」・ペーパーファスナー)を通して、裏で足を広げます。割ピンは文具店や100円ショップの文具売り場で探せます。</li>
+      <li>週のはじめ(または毎日)に、内側の円を時計回りに1つ回します。名前が1つずつ次の仕事へ移ります。</li>
+    </ol>
+    <h3>よくある質問</h3>
+    <ul>
+      <li><strong>人数と仕事の数がちがうときは?</strong> 人数のほうが多いときは、足りない分が「おやすみ」になります(毎回だれかがおやすみ)。仕事のほうが多いときは、毎回だれも入らない仕事が出ます。そのときは仕事をまとめるか、名前の1行に2人分(例: ゆい・そうた)や班の名前(例: 1班)を入れてください。1行は12文字までです。</li>
+      <li><strong>名前を手書きにしたい</strong> 名前の欄を空欄のまま印刷すると、内側の円が空白になります(見本のうすい「名前」は目印で、印刷されません)。</li>
+      <li><strong>ローテーション表と回る当番表は同じ順番?</strong> 同じです。2つの円の★を合わせた並びが1回目で、内側の円を時計回りに1つずつ回したときの並びを表にしています。</li>
+      <li><strong>祝日や行事の日は?</strong> 自動では飛ばしません。休みが多い時期は「回ごと(日付なし)」で作り、実際に当番をした日に1つずつ進めるのがおすすめです。日付入りにしたいときは、休み明けの日を「始まりの日」にして作り直してください(買い切り版では、休みにする日を入れて飛ばせます)。</li>
+      <li><strong>黒板やホワイトボードに貼りたい</strong> 外側の円の裏にマグネットシートを貼ると、貼ったまま内側の円を回せます。割ピンの足が当たるまん中は、マグネットシートを少し切り抜くか、まん中をよけて貼ってください。</li>
+      <li><strong>入れた名前はどこかに送られる?</strong> 送られません。すべてこのブラウザの中で処理し、入力した内容はこのブラウザにだけ自動で保存します。共用のパソコンでは、使い終わったら「入力を全部消す」を押してください。</li>
+    </ul>
+  </section>
+
+</main>
+
+<!--ANSHIN_START-->
+<section class="anshin" id="anshin" aria-labelledby="anshin-title">
+  <h2 id="anshin-title">データの扱いについて</h2>
+  <p>このページには、入力した内容を受け取る仕組みがありません。入力した文字や数字は、あなたのスマホやパソコンの中だけで処理されます。</p>
+  <ul>
+    <li>会員登録・ログイン・メールアドレスの入力はありません。</li>
+    <li>自分で確かめたい方へ: ページを開いたあと機内モードにしても、そのまま使えます。</li>
+  </ul>
+  <details>
+    <summary>もっとくわしく(保存・アクセス解析・公開について)</summary>
+    <ul>
+      <li>保存されるデータは、この端末のこのブラウザの中にだけ残ります(localStorage・sessionStorage)。共用のパソコンでは使い終わったら消してください。</li>
+      <li>アクセス解析(Google Analytics)のため、見たページのURL・参照元・端末やブラウザの種類・おおよその地域(IPアドレスから推定)・Cookieの識別子・BOOTHへのリンクのクリック・どのボタンを押したか(回数や選んだ設定を含む)がGoogleに送られます。目的は利用状況の把握です。入力した文字や画像は送りません。(<a href="https://policies.google.com/technologies/partner-sites?hl=ja" target="_blank" rel="noopener">Googleによるデータの使用</a>/<a href="https://tools.google.com/dlpage/gaoptout?hl=ja" target="_blank" rel="noopener">計測を止めるアドオン</a>。止めてもツールはそのまま使えます)</li>
+      <li>このツールの結果や作成物は目安です。入稿・契約・販売などの前には、印刷所や公式の情報でご確認ください。</li>
+      <li>処理の中身はすべて公開しています(詳しい方向け: <a href="https://github.com/uuhai0625/touban-hyo" target="_blank" rel="noopener">GitHub</a>)。</li>
+    </ul>
+  </details>
+  <p class="anshin-meta">作っている人: ウーハイ(個人開発)/不具合・ご質問は<a href="https://x.com/uuhai0625" target="_blank" rel="noopener">X(@uuhai0625)</a>へ/<a href="https://uuhai0625.github.io/" target="_blank" rel="noopener">ほかのツール</a>/この説明の更新日: 2026-10-13</p>
+</section>
+<!--ANSHIN_END-->
+
+<footer>
+  <p id="privacyNote">入力した内容はどこにも送信されません(すべてこのブラウザの中で処理し、このブラウザにだけ自動で保存します)。</p>
+  <p><a href="https://uuhai0625.booth.pm/" target="_blank" rel="noopener">他のツールも見る(BOOTHショップ)</a></p>
+  <p>不具合・ご要望は X <a href="https://x.com/uuhai0625" target="_blank" rel="noopener">@uuhai0625</a> まで。</p>
+  <p class="related-tools no-print">関連する無料ツール: <a href="https://uuhai0625.github.io/shoujo-maker/" target="_blank" rel="noopener">賞状メーカー</a> ・ <a href="https://uuhai0625.github.io/tournament-hyo/" target="_blank" rel="noopener">トーナメント表作成ツール</a> ・ <a href="https://uuhai0625.github.io/#free-tools">ツール一覧</a></p>
+</footer>
+
+<div id="printArea"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var EDITION = "free"; // "full" で買い切り完全版
+
+  function track(name, params) {
+    if (!window.dataLayer) return;
+    (function () { window.dataLayer.push(arguments); })("event", name, params || {});
+  }
+  var $ = function (id) { return document.getElementById(id); };
+  function setSt(id, msg, err) { var e = $(id); if (!e) return; if (e.textContent !== msg) e.textContent = msg; e.classList.toggle("err", !!err); }
+
+  var CREDIT = true, MAXN = 8, MAXP = 8;
+  
+  var STORE = EDITION === "full" ? "uuhai-touban-v1-full" : "uuhai-touban-v1";
+  var FONTS = {
+    r: '"Hiragino Maru Gothic ProN", "HG丸ｺﾞｼｯｸM-PRO", "BIZ UDGothic", "Yu Gothic", "Meiryo", sans-serif',
+    g: '"BIZ UDGothic", "Yu Gothic", "YuGothic", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif',
+    k: '"UD デジタル 教科書体 N-R", "UD Digi Kyokasho N-R", "BIZ UDGothic", "Yu Gothic", "Hiragino Maru Gothic ProN", sans-serif'
+  };
+  var PAL = {
+    color: ["#ffc9c9", "#ffdcae", "#fff1a1", "#cdeeb4", "#b5e8e1", "#bcd7ff", "#d9c8ff", "#ffc8e6"],
+    soft: ["#ffe8e8", "#fff0dc", "#fff9d6", "#e8f6dd", "#def5f2", "#e2eeff", "#eee6ff", "#ffe6f3"],
+    mono: ["#ffffff", "#ececec"]
+  };
+  var REST_FILL = "#e6e6e6";
+  var TASK_PRESETS = {
+    clean: ["そうじ当番", ["ほうき", "ぞうきん", "黒板", "つくえ運び", "ゴミすて", "ろうか"]],
+    kyushoku: ["給食当番", ["ごはん・パン", "大おかず", "小おかず", "牛乳", "食器", "配膳台"]],
+    home: ["おうちの当番", ["料理", "洗い物", "洗たく", "お風呂そうじ", "ゴミ出し", "買い物"]],
+    office: ["職場の当番", ["給湯室そうじ", "ゴミ出し", "会議室の片付け", "郵便物の仕分け", "植物の水やり", "共用棚の整理"]],
+    role: ["係の当番", ["号令", "黒板", "配り物", "生き物の世話", "電気", "窓あけ"]]
+  };
+  var REST = "おやすみ";
+  var WD = ["日", "月", "火", "水", "木", "金", "土"];
+
+  // ===== 入力 =====
+  // Excelから1列を貼り付けたとき(タブ区切り)にも1つずつに分ける
+  function lines(id) {
+    var e = $(id); if (!e) return [];
+    return e.value.split(/\r?\n|\t/).map(function (s) { return Array.from(s.trim()).slice(0, 12).join(""); }).filter(Boolean);
+  }
+  function mode() { var r = document.querySelector('input[name="mode"]:checked'); return r ? r.value : "circle"; }
+  function skipSet() {
+    var set = {}, e = $("inSkip"); if (!e) return set;
+    var y0 = (parseDate($("inStart").value) || new Date()).getFullYear();
+    e.value.split(/\r?\n|[,、\t]/).forEach(function (s) {
+      s = s.trim().replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); }).replace(/[／]/g, "/");
+      var m = /^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/.exec(s), mm = /^(\d{1,2})[\/.月](\d{1,2})日?$/.exec(s), d = null;
+      if (m) d = new Date(+m[1], +m[2] - 1, +m[3]);
+      else if (mm) { d = new Date(y0, +mm[1] - 1, +mm[2]); var st = parseDate($("inStart").value); if (st && d < st) d.setFullYear(y0 + 1); }
+      if (d && !isNaN(d)) set[key(d)] = 1;
+    });
+    return set;
+  }
+  function conf() {
+    var namesAll = lines("inNames"), tasksAll = lines("inTasks");
+    var people = namesAll.slice(0, MAXN), tasks = tasksAll.slice(0, MAXN);
+    var g = $("inGroup") ? Math.max(1, Math.min(6, parseInt($("inGroup").value, 10) || 1)) : 1, names = people;
+    if (g > 1) { names = []; for (var i = 0; i < people.length; i += g) names.push(people.slice(i, i + g).join("・")); }
+    var C = {
+      mode: mode(), title: $("inTitle").value.trim(), size: $("inSize").value, color: $("inColor").value,
+      font: FONTS[$("inFont").value] || FONTS.r, unit: $("inUnit").value, start: $("inStart").value,
+      count: Math.max(1, Math.min(MAXP, parseInt($("inCount").value, 10) || 8)), skip: skipSet(), group: g,
+      people: people, names: names, tasks: tasks, cutN: namesAll.length > MAXN, cutT: tasksAll.length > MAXN, blankNames: !names.length
+    };
+    var N = Math.max(names.length, tasks.length, 1);
+    C.N = N;
+    C.slotT = tasks.slice(); while (C.slotT.length < N) C.slotT.push(names.length > tasks.length ? REST : "");
+    C.slotN = names.slice(); while (C.slotN.length < N) C.slotN.push("");
+    C.hasRest = names.length > tasks.length && tasks.length > 0;
+    return C;
+  }
+  function isRest(C, j) { return j >= C.tasks.length && C.hasRest; }
+
+  // ===== 期間 =====
+  function parseDate(s) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); if (!m) return null; var d = new Date(+m[1], +m[2] - 1, +m[3]); return isNaN(d) ? null : d; }
+  function key(d) { return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+  function md(d) { return (d.getMonth() + 1) + "/" + d.getDate(); }
+  function periods(C) {
+    var out = [], d = parseDate(C.start);
+    if (C.unit === "turn" || !d) {
+      for (var i = 0; i < C.count; i++) out.push(C.unit === "week" ? "第" + (i + 1) + "週" : C.unit === "turn" ? (i + 1) + "回目" : (i + 1) + "日目");
+      return out;
+    }
+    var cur = new Date(d), guard = 0;
+    while (out.length < C.count && guard++ < 2000) {
+      var wd = cur.getDay(), skip = !!C.skip[key(cur)];
+      if (C.unit === "week") { if (!skip) out.push(md(cur) + "〜"); cur.setDate(cur.getDate() + 7); continue; }
+      if (!skip && (C.unit === "day" || (wd !== 0 && wd !== 6))) out.push(md(cur) + "(" + WD[wd] + ")");
+      cur.setDate(cur.getDate() + 1);
+    }
+    return out;
+  }
+  // 回目 k で i 番目の名前がする仕事は 区画 (i + k) % N(内側の円を時計回りに1つずつ回したときと同じ)
+  function tableRows(C) {
+    var labels = periods(C), N = C.N, rows = [];
+    var cols = C.tasks.slice(); if (C.hasRest) cols.push(REST);
+    labels.forEach(function (lab, k) {
+      var cells = cols.map(function () { return []; });
+      for (var i = 0; i < N; i++) {
+        var nm = C.slotN[i]; if (!nm) continue;
+        var s = (i + k) % N, ci = s < C.tasks.length ? s : (C.hasRest ? cols.length - 1 : -1);
+        if (ci >= 0) cells[ci].push(nm);
+      }
+      rows.push({ label: lab, cells: cells.map(function (a) { return a.join("・"); }) });
+    });
+    return { cols: cols, rows: rows };
+  }
+
+  // ===== ページ =====
+  var COLS_PER_PAGE = 10;
+  function pages(C) {
+    if (C.mode === "circle") {
+      if (C.size === "a4small") return [{ kind: "both", W: 210, H: 297 }];
+      var big = C.size === "a3big", W = big ? 297 : 210, H = big ? 420 : 297;
+      return [{ kind: "outer", W: W, H: H }, { kind: "inner", W: W, H: H }];
+    }
+    var T = tableRows(C), out = [], nc = T.cols.length, cchunks = [];
+    for (var c0 = 0; c0 < Math.max(nc, 1); c0 += COLS_PER_PAGE) cchunks.push([c0, Math.min(nc, c0 + COLS_PER_PAGE)]);
+    var land = Math.min(nc, COLS_PER_PAGE) > 5, per = land ? 12 : 20;
+    cchunks.forEach(function (cc) {
+      for (var s = 0; s < Math.max(T.rows.length, 1); s += per) out.push({ kind: "table", W: land ? 297 : 210, H: land ? 210 : 297, T: T, from: s, to: Math.min(T.rows.length, s + per), c0: cc[0], c1: cc[1], land: land, per: per, colSplit: cchunks.length > 1 });
+    });
+    return out;
+  }
+
+  // ===== 描画 =====
+  var ROT = "ー―‐－～〜…‥（）「」『』【】〔〕［］〈〉《》-~()=";
+  function radialFit(text, rOut, rIn, N, maxS) {
+    var n = Array.from(text).length, band = rOut - rIn, s = maxS, half = Math.PI / N;
+    if (!n) return maxS;
+    for (var g = 0; g < 80; g++) {
+      var len = n * s * 1.04, mid = rIn + (band - len) / 2;
+      if (len <= band && s <= 2 * Math.max(mid, 1) * Math.sin(Math.min(half, Math.PI / 2)) * 0.8) break;
+      s *= 0.94;
+    }
+    return s;
+  }
+  // 同じ円の文字はなるべく同じ大きさに(5文字以下の言葉でそろえ、長い言葉だけ小さく)
+  function commonSize(list, rOut, rIn, N, maxS) {
+    var short = list.filter(function (t) { return t && Array.from(t).length <= 5; });
+    return short.reduce(function (m, t) { return Math.min(m, radialFit(t, rOut, rIn, N, maxS)); }, maxS);
+  }
+  function radialText(ctx, text, cx, cy, ang, rOut, rIn, N, maxS, font, color) {
+    var ch = Array.from(text), n = ch.length; if (!n) return;
+    var band = rOut - rIn, s = Math.min(maxS, radialFit(text, rOut, rIn, N, maxS)), len = n * s * 1.04;
+    var top = rIn + (band + len) / 2, step = s * 1.04;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(ang);
+    ctx.fillStyle = color; ctx.font = "bold " + s + "px " + font; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ch.forEach(function (c, i) {
+      var y = -(top - step * (i + 0.5));
+      if (c === " " || c === "　") return;
+      if ("ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮ".indexOf(c) >= 0) { ctx.fillText(c, s * 0.1, y - s * 0.1); return; }
+      if (ROT.indexOf(c) >= 0) { ctx.save(); ctx.translate(0, y); ctx.rotate(Math.PI / 2); ctx.fillText(c, 0, 0); ctx.restore(); }
+      else ctx.fillText(c, 0, y);
+    });
+    ctx.restore();
+  }
+  function wedge(ctx, cx, cy, r0, r1, a0, a1) {
+    ctx.beginPath(); ctx.arc(cx, cy, r1, a0, a1); ctx.arc(cx, cy, r0, a1, a0, true); ctx.closePath();
+  }
+  // 区画 j の中心角(上から時計回り)
+  function secAng(j, N) { return (j + 0.5) * Math.PI * 2 / N; }
+  function hole(ctx, cx, cy, k) {
+    ctx.save(); ctx.strokeStyle = "#333"; ctx.lineWidth = 0.3 * k;
+    ctx.beginPath(); ctx.moveTo(cx - 3 * k, cy); ctx.lineTo(cx + 3 * k, cy); ctx.moveTo(cx, cy - 3 * k); ctx.lineTo(cx, cy + 3 * k); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, 1.2 * k, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+  }
+  // となり合う区画が同じ色にならないように
+  function fillOf(C, j, N) {
+    var p = PAL[C.color] || PAL.color, idx = j % p.length;
+    if (N > 1 && j === N - 1 && idx === 0) idx = (N - 2) % p.length === 1 ? 2 % p.length : 1;
+    return p[idx];
+  }
+  function star(ctx, x, y, r, col) {
+    ctx.save(); ctx.fillStyle = col; ctx.beginPath();
+    for (var i = 0; i < 10; i++) { var a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+  function drawOuter(ctx, C, cx, cy, R, k, preview) {
+    var N = C.N, Ri = R * 0.62, step = Math.PI * 2 / N;
+    for (var j = 0; j < N; j++) {
+      wedge(ctx, cx, cy, Ri, R, j * step - Math.PI / 2, (j + 1) * step - Math.PI / 2);
+      ctx.fillStyle = isRest(C, j) ? (C.color === "mono" ? "#f2f2f2" : REST_FILL) : fillOf(C, j, N); ctx.fill();
+    }
+    ctx.strokeStyle = "#555"; ctx.lineWidth = 0.3 * k;
+    if (N > 1) for (j = 0; j < N; j++) { var a = j * step - Math.PI / 2; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * Ri, cy + Math.sin(a) * Ri); ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); ctx.stroke(); }
+    ctx.beginPath(); ctx.arc(cx, cy, Ri, 0, Math.PI * 2); ctx.setLineDash([1.5 * k, 1.2 * k]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.lineWidth = 0.6 * k; ctx.strokeStyle = "#222"; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+    var labels = C.slotT.map(function (t) { return t || (preview ? "仕事" : ""); });
+    var so = commonSize(labels, R - 2.5 * k, Ri + 3.5 * k, N, 11 * k * R / (95 * k));
+    for (j = 0; j < N; j++) {
+      var t = C.slotT[j], ph = !t && preview;
+      radialText(ctx, labels[j], cx, cy, secAng(j, N), R - 2.5 * k, Ri + 3.5 * k, N, so, C.font, isRest(C, j) ? "#555" : ph ? "#999" : "#1d1d1d");
+    }
+    // 1回目の目印(内側の円の★と合わせる)
+    var sa = secAng(0, N) - Math.PI / 2, sr = Ri + 1.8 * k;
+    star(ctx, cx + Math.cos(sa) * sr, cy + Math.sin(sa) * sr, 1.6 * k, "#c0392b");
+    ctx.save(); ctx.fillStyle = "#777"; ctx.font = (2.6 * k) + "px " + C.font; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("ここに内側の円を重ねます(★を合わせる)", cx, cy - Ri * 0.5); ctx.restore();
+    hole(ctx, cx, cy, k);
+  }
+  function drawInner(ctx, C, cx, cy, Ri, k, preview) {
+    var N = C.N, r0 = Ri * 0.3, step = Math.PI * 2 / N, p = C.color === "mono" ? PAL.mono : ["#ffffff", "#f3f3f3"];
+    for (var j = 0; j < N; j++) {
+      wedge(ctx, cx, cy, r0, Ri, j * step - Math.PI / 2, (j + 1) * step - Math.PI / 2);
+      ctx.fillStyle = p[(N % 2 === 1 && j === N - 1 && N > 1) ? 1 : j % 2]; ctx.fill();
+    }
+    ctx.strokeStyle = "#555"; ctx.lineWidth = 0.3 * k;
+    if (N > 1) for (j = 0; j < N; j++) { var a = j * step - Math.PI / 2; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); ctx.lineTo(cx + Math.cos(a) * Ri, cy + Math.sin(a) * Ri); ctx.stroke(); }
+    ctx.beginPath(); ctx.arc(cx, cy, r0, 0, Math.PI * 2); ctx.stroke();
+    ctx.lineWidth = 0.6 * k; ctx.strokeStyle = "#222"; ctx.beginPath(); ctx.arc(cx, cy, Ri, 0, Math.PI * 2); ctx.stroke();
+    var labels = C.slotN.map(function (t) { return t || (preview && C.blankNames ? "名前" : ""); });
+    var si = commonSize(labels, Ri - 4.5 * k, r0 + 1.5 * k, N, 10 * k * Ri / (59 * k));
+    for (j = 0; j < N; j++) {
+      var ph = !C.slotN[j] && preview && C.blankNames;
+      radialText(ctx, labels[j], cx, cy, secAng(j, N), Ri - 4.5 * k, r0 + 1.5 * k, N, si, C.font, ph ? "#999" : "#1d1d1d");
+    }
+    // 1回目の目印(外側の円の★と合わせる)
+    var sa = secAng(0, N) - Math.PI / 2, sr = Ri - 2.2 * k;
+    star(ctx, cx + Math.cos(sa) * sr, cy + Math.sin(sa) * sr, 1.6 * k, "#c0392b");
+    // まん中: 当番表の名前と回す向き
+    ctx.save(); ctx.fillStyle = "#1d1d1d"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    var tc = Array.from(C.title || "当番表").slice(0, 14), lines2 = tc.length > 7 ? [tc.slice(0, Math.ceil(tc.length / 2)).join(""), tc.slice(Math.ceil(tc.length / 2)).join("")] : [tc.join("")];
+    var longest = Math.max.apply(null, lines2.map(function (l) { return Array.from(l).length; }));
+    var ts = Math.min(r0 * 0.3, (r0 * 1.6) / Math.max(1, longest));
+    ctx.font = "bold " + ts + "px " + C.font;
+    lines2.forEach(function (l, i) { ctx.fillText(l, cx, cy - r0 * 0.42 - (lines2.length - 1 - i) * ts * 1.1); });
+    var fs = Math.min(r0 * 0.17, 3 * k);
+    ctx.fillStyle = "#333"; ctx.font = fs + "px " + C.font; ctx.fillText("時計回りに", cx, cy + r0 * 0.5); ctx.fillText("1つずつ回す", cx, cy + r0 * 0.5 + fs * 1.25);
+    // 回す向きの矢印(右側の時計回り)
+    ctx.strokeStyle = "#333"; ctx.lineWidth = 0.35 * k; var ar = r0 * 0.8, aa0 = -Math.PI * 0.18, aa1 = Math.PI * 0.18;
+    ctx.beginPath(); ctx.arc(cx, cy, ar, aa0, aa1); ctx.stroke();
+    var ex = cx + Math.cos(aa1) * ar, ey = cy + Math.sin(aa1) * ar, tg = aa1 + Math.PI / 2, hd = 1.6 * k;
+    ctx.beginPath();
+    ctx.moveTo(ex, ey); ctx.lineTo(ex - Math.cos(tg - 0.45) * hd, ey - Math.sin(tg - 0.45) * hd);
+    ctx.moveTo(ex, ey); ctx.lineTo(ex - Math.cos(tg + 0.45) * hd, ey - Math.sin(tg + 0.45) * hd);
+    ctx.stroke(); ctx.restore();
+    hole(ctx, cx, cy, k);
+  }
+  function pageLabel(ctx, text, k, C) {
+    ctx.save(); ctx.fillStyle = "#555"; ctx.font = (3.2 * k) + "px " + C.font; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText(text, 10 * k, 8 * k); ctx.restore();
+  }
+  function note(ctx, text, x, y, k, C) {
+    ctx.save(); ctx.fillStyle = "#555"; ctx.font = (2.8 * k) + "px " + C.font; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText(text, x, y); ctx.restore();
+  }
+  function credit(ctx, W, H, k, C) {
+    if (!CREDIT) return;
+    ctx.save(); ctx.fillStyle = "#9a9a9a"; ctx.font = (2.6 * k) + "px " + C.font; ctx.textAlign = "right"; ctx.textBaseline = "alphabetic"; ctx.fillText("回る当番表メーカー", (W - 7) * k, (H - 7) * k); ctx.restore();
+  }
+  function fitText(ctx, text, maxW, size, font, bold, floor) {
+    var s = size; ctx.font = (bold ? "bold " : "") + s + "px " + font;
+    while (s > floor && ctx.measureText(text).width > maxW) { s = Math.max(floor, s * 0.92); ctx.font = (bold ? "bold " : "") + s + "px " + font; }
+    return s;
+  }
+  // 表のセル: 2〜3行に折り返し、それでも入らなければ最小の大きさで切り詰める
+  function cellText(ctx, text, x, y, w, h, size, floor, font, bold, color) {
+    if (!text) return;
+    var s = size, lines3, maxL = Math.max(1, Math.min(3, Math.floor(h / (floor * 1.15))));
+    function wrap(sz) {
+      ctx.font = (bold ? "bold " : "") + sz + "px " + font;
+      if (ctx.measureText(text).width <= w) return [text];
+      var parts = text.split("・"), out = [], cur = "";
+      parts.forEach(function (p, i) {
+        var add = (cur ? "・" : "") + p;
+        if (cur && ctx.measureText(cur + add).width > w) { out.push(cur + "・"); cur = p; } else cur += add;
+      });
+      if (cur) out.push(cur);
+      var res = [];
+      out.forEach(function (l) {
+        if (ctx.measureText(l).width <= w) { res.push(l); return; }
+        var c = ""; Array.from(l).forEach(function (ch) { if (ctx.measureText(c + ch).width > w && c) { res.push(c); c = ch; } else c += ch; }); if (c) res.push(c);
+      });
+      return res;
+    }
+    for (;;) {
+      lines3 = wrap(s);
+      if ((lines3.length <= maxL && lines3.length * s * 1.15 <= h) || s <= floor) break;
+      s = Math.max(floor, s * 0.9);
+    }
+    ctx.save(); ctx.beginPath(); ctx.rect(x - w / 2 - 0.5, y - h / 2, w + 1, h); ctx.clip();
+    ctx.fillStyle = color; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    var shown = lines3.slice(0, maxL), lh = s * 1.15;
+    if (lines3.length > maxL) shown[maxL - 1] = Array.from(shown[maxL - 1]).slice(0, -1).join("") + "…";
+    shown.forEach(function (l, i) { ctx.fillText(l, x, y + (i - (shown.length - 1) / 2) * lh); });
+    ctx.restore();
+  }
+  function drawTable(ctx, C, pg, k, preview) {
+    var W = pg.W, H = pg.H, m = 12, T = pg.T, rows = T.rows.slice(pg.from, pg.to), cols = T.cols.slice(pg.c0, pg.c1), ncol = cols.length + 1;
+    ctx.fillStyle = "#1d1d1d"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    var title = C.title || "当番表";
+    fitText(ctx, title, (W - 2 * m) * k, 8 * k, C.font, true, 4 * k); ctx.fillText(title, W / 2 * k, (m + 4) * k);
+    var all = T.rows.length, sub = [];
+    if (all > (pg.to - pg.from)) sub.push((pg.from + 1) + "〜" + pg.to + "回目(全" + all + "回)");
+    if (pg.colSplit) sub.push("仕事 " + (pg.c0 + 1) + "〜" + pg.c1 + "(全" + T.cols.length + ")");
+    if (sub.length) { ctx.fillStyle = "#555"; ctx.font = (3 * k) + "px " + C.font; ctx.fillText(sub.join(" ・ "), W / 2 * k, (m + 10.5) * k); }
+    var top = m + 15, labW = Math.min(36, (W - 2 * m) * 0.22), cw = (W - 2 * m - labW) / Math.max(1, ncol - 1);
+    var rh = Math.min(16, (H - top - m - 8 - 12) / pg.per), hh = 12;
+    ctx.fillStyle = "#555"; ctx.fillRect(m * k, top * k, labW * k, hh * k);
+    ctx.fillStyle = "#fff"; ctx.font = "bold " + (4.2 * k) + "px " + C.font;
+    ctx.fillText(C.unit === "turn" ? "回" : C.unit === "week" ? "週" : "日", (m + labW / 2) * k, (top + hh / 2) * k);
+    cols.forEach(function (c, i) {
+      var gi = pg.c0 + i, rest = c === REST && gi === T.cols.length - 1 && C.hasRest;
+      ctx.fillStyle = rest ? REST_FILL : fillOf(C, gi, T.cols.length);
+      ctx.fillRect((m + labW + cw * i) * k, top * k, cw * k, hh * k);
+      cellText(ctx, c, (m + labW + cw * (i + 0.5)) * k, (top + hh / 2) * k, (cw - 1.5) * k, (hh - 1) * k, 4.2 * k, 2.6 * k, C.font, true, "#1d1d1d");
+    });
+    rows.forEach(function (r, ri) {
+      var y = top + hh + rh * ri;
+      if (ri % 2) { ctx.fillStyle = "#f5f5f5"; ctx.fillRect(m * k, y * k, (W - 2 * m) * k, rh * k); }
+      cellText(ctx, r.label, (m + labW / 2) * k, (y + rh / 2) * k, (labW - 2) * k, (rh - 1) * k, Math.min(4.2, rh * 0.42) * k, 2.6 * k, C.font, true, "#1d1d1d");
+      cols.forEach(function (c, i) {
+        var v = r.cells[pg.c0 + i];
+        cellText(ctx, v, (m + labW + cw * (i + 0.5)) * k, (y + rh / 2) * k, (cw - 1.5) * k, (rh - 1) * k, Math.min(4.6, rh * 0.45) * k, 2.6 * k, C.font, false, c === REST ? "#555" : "#1d1d1d");
+      });
+    });
+    var bottom = top + hh + rh * rows.length;
+    ctx.strokeStyle = "#555"; ctx.lineWidth = 0.25 * k;
+    for (var ri = 0; ri <= rows.length; ri++) { var yy = top + hh + rh * ri; ctx.beginPath(); ctx.moveTo(m * k, yy * k); ctx.lineTo((W - m) * k, yy * k); ctx.stroke(); }
+    var xs = [m, m + labW]; for (var ci = 1; ci < ncol; ci++) xs.push(m + labW + cw * ci);
+    xs.forEach(function (xx) { ctx.beginPath(); ctx.moveTo(xx * k, top * k); ctx.lineTo(xx * k, bottom * k); ctx.stroke(); });
+    ctx.lineWidth = 0.45 * k; ctx.strokeRect(m * k, top * k, (W - 2 * m) * k, (bottom - top) * k);
+    if (!C.names.length && preview) { ctx.fillStyle = "#999"; ctx.font = (3.4 * k) + "px " + C.font; ctx.textAlign = "center"; ctx.fillText("名前を入れると、ここに当番が入ります", W / 2 * k, (top + hh + 10) * k); }
+    var nt = C.hasRest ? "人数が仕事の数より多いので、毎回「おやすみ」の人がいます。" : (C.names.length && C.tasks.length > C.names.length ? "仕事の数が人数より多いので、毎回だれも入らない仕事があります。" : "");
+    if (nt) note(ctx, nt, m * k, (bottom + 6) * k, k, C);
+  }
+  function render(C, pg, dpi, preview) {
+    var k = dpi / 25.4, c = document.createElement("canvas");
+    c.width = Math.round(pg.W * k); c.height = Math.round(pg.H * k);
+    var ctx = c.getContext("2d"); if (!ctx) return null;
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+    var cx = pg.W / 2 * k;
+    if (pg.kind === "outer") {
+      var R = (pg.W === 297 ? 140 : 95) * k;
+      pageLabel(ctx, "外側の円(仕事)— いちばん外の太い線で切ります(点線は切りません)", k, C);
+      drawOuter(ctx, C, cx, pg.H / 2 * k, R, k, preview);
+    } else if (pg.kind === "inner") {
+      var Ri = (pg.W === 297 ? 140 : 95) * 0.62 * k;
+      pageLabel(ctx, "内側の円(名前)— 太い線で切り、外側の円に重ねて★を合わせます", k, C);
+      drawInner(ctx, C, cx, pg.H / 2 * k, Ri, k, preview);
+    } else if (pg.kind === "both") {
+      pageLabel(ctx, "2つの円を太い線で切り、小さい円を大きい円に重ねて★を合わせ、まん中を割ピンで留めます", k, C);
+      drawOuter(ctx, C, cx, 92 * k, 75 * k, k, preview);
+      drawInner(ctx, C, cx, 222 * k, 75 * 0.62 * k, k, preview);
+    } else drawTable(ctx, C, pg, k, preview);
+    credit(ctx, pg.W, pg.H, k, C);
+    return c;
+  }
+
+  // ===== 見本 =====
+  function refresh() {
+    var C = conf(), P = pages(C), box = $("pv");
+    box.textContent = "";
+    P.forEach(function (pg, i) {
+      var c = render(C, pg, 420 / pg.W * 25.4, true); if (!c) return;
+      var cap = pg.kind === "outer" ? "外側の円(仕事)" : pg.kind === "inner" ? "内側の円(名前)" : pg.kind === "both" ? "回る当番表" : "ローテーション表 " + (i + 1) + "ページ目";
+      if (P.length > 1) { var p = document.createElement("p"); p.className = "cap"; p.textContent = cap; box.appendChild(p); }
+      c.setAttribute("role", "img");
+      c.setAttribute("aria-label", "見本: " + cap + (pg.kind === "table" ? "" : "。仕事は" + (C.tasks.join("、") || "なし") + "。名前は" + (C.names.join("、") || "空白")));
+      box.appendChild(c);
+    });
+    var msg = [], warn = [];
+    if (C.mode === "circle") msg.push(C.N + "つに分けた円" + (C.group > 1 ? "(" + C.people.length + "人を" + C.group + "人ずつ" + C.names.length + "組に)" : ""));
+    else msg.push(C.count + "回分・" + P.length + "ページ" + (C.group > 1 ? "(" + C.people.length + "人を" + C.group + "人ずつ" + C.names.length + "組に)" : ""));
+    if (C.blankNames) msg.push("名前が空欄なので、名前の欄は空白(手書き用)で印刷します。見本のうすい「名前」は目印で、印刷されません");
+    if (C.hasRest) warn.push("人数が多いので、毎回" + (C.names.length - C.tasks.length) + (C.group > 1 ? "組" : "人") + "がおやすみになります");
+    if (C.names.length && C.tasks.length > C.names.length) warn.push("仕事の数が多いので、毎回" + (C.tasks.length - C.names.length) + "つの仕事に名前が入りません");
+    if (!C.tasks.length) warn.push("仕事を1つ以上入れてください");
+    if (C.mode === "circle" && C.group > 1) warn.push("組にすると名前が長くなり、円の中の字が小さくなります。大きさを「教室用(A3)」にするか、ローテーション表がおすすめです");
+    if (C.cutN || C.cutT) warn.push(EDITION === "full" ? "名前と仕事は40までです(41行目からは当番表に入りません)" : "無料版の名前と仕事は8つまでです(9行目からは当番表に入りません。買い切り版は40まで)");
+    setSt("listNote", msg.join("。") + "。", false);
+    setSt("warnNote", warn.length ? warn.join("。") + "。" : "", !!(C.cutN || C.cutT || !C.tasks.length));
+    $("circleOpts").classList.toggle("hidden", C.mode !== "circle");
+    $("tableOpts").classList.toggle("hidden", C.mode !== "table");
+    $("startField").classList.toggle("hidden", C.unit === "turn");
+    if ($("outSt").classList.contains("err")) setSt("outSt", "", false);
+    save();
+  }
+  var timer = null;
+  function later() { clearTimeout(timer); timer = setTimeout(refresh, 150); }
+
+  // ===== 自動保存(始まりの日は保存しない=開いた日になる) =====
+  var FIELDS = ["inTitle", "inNames", "inTasks", "inSize", "inColor", "inFont", "inUnit", "inCount", "inGroup", "inSkip"];
+  function snapshot() { var o = { mode: mode() }; FIELDS.forEach(function (id) { if ($(id)) o[id] = $(id).value; }); return o; }
+  function applySnap(o) {
+    if (!o || typeof o !== "object") return;
+    FIELDS.forEach(function (id) {
+      var v = o[id], el = $(id); if (typeof v !== "string" || !el) return;
+      if (el.tagName === "SELECT") { if ([].some.call(el.options, function (op) { return op.value === v; })) el.value = v; }
+      else el.value = el.tagName === "TEXTAREA" ? v.slice(0, 3000) : v.slice(0, 40);
+    });
+    if (o.mode === "circle" || o.mode === "table") { var r = document.querySelector('input[name="mode"][value="' + o.mode + '"]'); if (r) r.checked = true; }
+  }
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(snapshot())); } catch (e) {} }
+  function load() { try { var s = localStorage.getItem(STORE); if (s) { applySnap(JSON.parse(s)); return true; } } catch (e) {} return false; }
+  $("clearBtn").addEventListener("click", function () {
+    if (!window.confirm("入力した名前・仕事・当番表の名前を全部消しますか?(このブラウザに自動で保存した内容も消えます)")) return;
+    ["inTitle", "inNames", "inTasks", "inSkip"].forEach(function (id) { if ($(id)) $(id).value = ""; });
+    try { localStorage.removeItem(STORE); } catch (e) {}
+    refresh(); setSt("outSt", "入力を消しました。");
+  });
+
+  
+
+  // ===== イベント =====
+  ["inSize", "inColor", "inFont", "inUnit", "inStart", "inCount", "inGroup"].forEach(function (id) { if ($(id)) $(id).addEventListener("change", refresh); });
+  ["inTitle", "inNames", "inTasks", "inSkip"].forEach(function (id) { if ($(id)) $(id).addEventListener("input", later); });
+  [].forEach.call(document.querySelectorAll('input[name="mode"]'), function (r) { r.addEventListener("change", refresh); });
+  var PRESET_TITLES = Object.keys(TASK_PRESETS).map(function (k) { return TASK_PRESETS[k][0]; });
+  $("inPreset").addEventListener("change", function () {
+    var p = TASK_PRESETS[this.value]; if (!p) return;
+    if ($("inTasks").value.trim() && !window.confirm("今の仕事を、例に入れかえますか?")) { this.value = ""; return; }
+    $("inTasks").value = p[1].join("\n");
+    var t = $("inTitle").value.trim(); if (!t || PRESET_TITLES.indexOf(t) >= 0) $("inTitle").value = p[0];
+    this.value = ""; refresh();
+  });
+
+  function readyCheck(C) {
+    if (!C.tasks.length) { setSt("warnNote", "仕事を1つ以上入れてください。", true); setSt("outSt", "仕事を1つ以上入れてください(②の「仕事」の欄)。", true); $("inTasks").focus(); return false; }
+    if ((C.cutN || C.cutT) && !window.confirm("名前・仕事は" + MAXN + "つまでです。" + (MAXN + 1) + "つ目からは当番表に入りません。このまま進めますか?")) return false;
+    if (C.mode === "table" && !C.names.length) return window.confirm("名前が入っていないので、表の中は空白になります。このまま進めますか?");
+    return true;
+  }
+
+  // ===== 印刷・保存 =====
+  function toBlob(c) { return new Promise(function (res) { c.toBlob(function (b) { res(b); }, "image/png"); }); }
+  function download(blob, name) {
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  }
+  function renderAll(C, P, dpi) {
+    var out = [], p = Promise.resolve();
+    P.forEach(function (pg) {
+      p = p.then(function () { var c = render(C, pg, dpi, false); if (!c) throw new Error("canvas"); return toBlob(c).then(function (b) { c.width = c.height = 0; if (!b) throw new Error("blob"); out.push(b); }); });
+    });
+    return p.then(function () { return out; });
+  }
+  function dpiFor(P) { return P[0].W * P[0].H > 70000 || P.length > 3 ? 200 : 250; }
+  function paperName(pg) { return pg.W === 297 && pg.H === 420 ? "A3縦" : pg.W > pg.H ? "A4横" : "A4縦"; }
+  var busy = false, printUrls = [];
+  function clearPrint() { printUrls.forEach(function (u) { URL.revokeObjectURL(u); }); printUrls = []; $("printArea").textContent = ""; document.body.classList.remove("printing"); }
+  $("printBtn").addEventListener("click", function () {
+    if (busy) return;
+    var C = conf(); if (!readyCheck(C)) return;
+    var P = pages(C), W = P[0].W, H = P[0].H;
+    busy = true; clearPrint();
+    $("pageStyle").textContent = "@page { size: " + W + "mm " + H + "mm; margin: 0; }";
+    setSt("outSt", "印刷用の画像を作っています…");
+    renderAll(C, P, dpiFor(P)).then(function (blobs) {
+      return Promise.all(blobs.map(function (b) {
+        return new Promise(function (res, rej) { var u = URL.createObjectURL(b), im = new Image(); printUrls.push(u); im.style.width = (W - 0.3) + "mm"; im.style.height = (H - 0.3) + "mm"; im.onload = res; im.onerror = function () { rej(new Error("img")); }; im.alt = ""; im.src = u; $("printArea").appendChild(im); });
+      })).then(function () { return blobs.length; });
+    }).then(function (cnt) {
+      document.body.classList.add("printing");
+      setSt("outSt", "印刷画面を開きました(" + paperName(P[0]) + "・" + cnt + "枚)。倍率は「100%」がおすすめです。");
+      track("touban_print", { mode: C.mode, n: C.N, pages: cnt, group: C.group });
+      setTimeout(function () { window.print(); }, 50);
+    }).catch(function () { clearPrint(); setSt("outSt", "印刷用の画像を作れませんでした。ページを読み込み直すか、大きさを「小さめ」にしてもう一度お試しください。", true); }).then(function () { busy = false; });
+  });
+  // 印刷の画像は次の印刷を始めるときに片付ける(スマホでは印刷の準備中に消えないように)
+  window.addEventListener("afterprint", function () { document.body.classList.remove("printing"); });
+  var saveMany = function (blobs, names) {
+    var p = Promise.resolve();
+    blobs.forEach(function (b, i) { p = p.then(function () { download(b, names[i]); return new Promise(function (r) { setTimeout(r, 700); }); }); });
+    return p;
+  };
+  
+  $("pngBtn").addEventListener("click", function () {
+    if (busy) return;
+    var C = conf(); if (!readyCheck(C)) return;
+    var P = pages(C), safeTitle = (C.title || "当番表").replace(/[\/\\:*?"<>|]/g, ""), pn = paperName(P[0]).slice(0, 2);
+    var names = P.map(function (pg, i) { return safeTitle + "_" + (pg.kind === "outer" ? "外側の円" : pg.kind === "inner" ? "内側の円" : pg.kind === "both" ? "回る当番表" : (i + 1) + "ページ") + ".png"; });
+    busy = true;
+    setSt("outSt", "画像を作っています…");
+    renderAll(C, P, dpiFor(P)).then(function (blobs) {
+      var phone = window.matchMedia && matchMedia("(pointer:coarse)").matches, files = null;
+      track("touban_save", { mode: C.mode, n: C.N, pages: blobs.length, group: C.group });
+      try { files = blobs.map(function (b, i) { return new File([b], names[i], { type: "image/png" }); }); } catch (e) {}
+      var done = "保存しました。コンビニで印刷するときは" + pn + "の用紙で「等倍」を選んでください。";
+      if (phone && files && navigator.canShare && navigator.canShare({ files: files })) {
+        setSt("outSt", "共有メニューが開きます。「画像を保存」を選ぶと写真に入ります。");
+        return navigator.share({ files: files }).then(function () { setSt("outSt", done); }, function (err) {
+          if (err && err.name === "AbortError") { setSt("outSt", "共有をやめました。もう一度押すと保存できます。"); return; }
+          return saveMany(blobs, names, safeTitle + ".zip").then(function () { setSt("outSt", done); });
+        });
+      }
+      return saveMany(blobs, names, safeTitle + "_" + blobs.length + "枚.zip").then(function () {
+        setSt("outSt", (blobs.length > 1 ? blobs.length + "枚の画像を" : "画像を") + done + (blobs.length > 1 && EDITION !== "full" ? "ブラウザが「複数のファイルのダウンロード」を確かめてきたら、許可してください。" : ""));
+      });
+    }).catch(function () { setSt("outSt", "画像を作れませんでした。ページを読み込み直すか、大きさを「小さめ」にしてもう一度お試しください。", true); }).then(function () { busy = false; });
+  });
+
+  if (EDITION === "full") $("pro-section").classList.add("hidden");
+  if (EDITION !== "full") {
+    $("privacyNote").innerHTML = '入力した内容はどこにも送信されません(すべてこのブラウザの中で処理し、このブラウザにだけ自動で保存します)。このページでは利用状況の把握のためにアクセス解析(Google Analytics)を使っています(入力した内容は含みません)。<a href="https://policies.google.com/technologies/partner-sites?hl=ja" target="_blank" rel="noopener">Googleによるデータの使用について</a>';
+  }
+  // 初期値
+  for (var n = 1; n <= MAXP; n++) { var o = document.createElement("option"); o.value = n; o.textContent = n + "回分"; if (n === 8) o.selected = true; $("inCount").appendChild(o); }
+  $("countNote").textContent = EDITION === "full" ? "60回分まで。多いときは数ページに分かれます" : "無料版は8回分まで(買い切り版は60回分まで)";
+  $("namesHint").textContent = (EDITION === "full" ? "40人まで。" : "8つまで。") + "Excelの1列をそのまま貼り付けても使えます。1行は12文字まで。空欄のままだと、名前の欄が空白(手書き用)になります";
+  var td = new Date(); $("inStart").value = td.getFullYear() + "-" + ("0" + (td.getMonth() + 1)).slice(-2) + "-" + ("0" + td.getDate()).slice(-2);
+  if (!load()) { $("inTasks").value = TASK_PRESETS.clean[1].join("\n"); $("inTitle").value = TASK_PRESETS.clean[0]; }
+  refresh();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
+})();
+</script>
+<!--UPSELL_JS_START-->
+<script>
+(function () {
+  "use strict";
+  var q = new URLSearchParams(location.search);
+  if (q.get("obs") === "1" || document.documentElement.classList.contains("obs")) return;
+  // 小さな案内(トースト)は、買い切り版がパソコン向けなので、マウス操作の広い画面でだけ出す
+  var pc = !!(window.matchMedia && matchMedia("(pointer:fine) and (min-width:720px)").matches);
+  var buy = document.getElementById("buyLink");
+  var pro = document.getElementById("pro-section");
+  if (!buy || !pro) return;
+  var FEATS = [];
+  var path = location.pathname.replace(/index\.html$/, "");
+  var KEY_CLOSED = "upsell_closed_until:" + path, KEY_SHOWN = "upsell_shown:" + path;
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function sess(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e) { return null; } }
+  function gtagEv(name, p) { if (!window.dataLayer) return; (function () { window.dataLayer.push(arguments); })("event", name, p || {}); }
+
+  var shown = false;
+  function blocked() {
+    if (shown || sess(KEY_SHOWN) === "1") return true;
+    var until = Number(store(KEY_CLOSED) || 0);
+    return until && Date.now() < until;
+  }
+  function feats() {
+    if (FEATS.length) return FEATS;
+    var out = [];
+    var lis = pro.querySelectorAll(".feat-list li");
+    for (var i = 0; i < lis.length && out.length < 3; i++) {
+      var all = lis[i].textContent.replace(/\s+/g, " ").trim();
+      if (/スマホ|HTMLファイル|パソコンで使う/.test(all)) continue;
+      var st = lis[i].querySelectorAll("strong");
+      var t = st.length === 1 ? st[0].textContent : all.split(/[::。]/)[0];
+      t = t.replace(/[((][^()()]*[))]/g, "").replace(/\s+/g, " ").trim();
+      if (t.length > 40) t = t.slice(0, 39) + "…";
+      if (t) out.push(t);
+    }
+    return out;
+  }
+  // 「〜してください」「できません」など、失敗の表示が出ていたら案内しない
+  function failed() {
+    var els = document.querySelectorAll('[role="status"], [role="alert"], [aria-live]');
+    for (var i = 0; i < els.length; i++) {
+      if (pro.contains(els[i]) || !els[i].offsetParent) continue;
+      if (/ください|できません|できませんでした|失敗|ありません|エラー/.test(els[i].textContent)) return true;
+    }
+    return false;
+  }
+  function proVisible() {
+    var r = pro.getBoundingClientRect();
+    return r.top < innerHeight && r.bottom > 0;
+  }
+  function show(trigger) {
+    if (!pc || blocked() || (trigger === "action" && failed()) || proVisible()) return;
+    var list = feats();
+    if (!list.length) return;
+    shown = true;
+    sess(KEY_SHOWN, "1");
+    var box = document.createElement("aside");
+    box.className = "upsell-toast";
+    box.setAttribute("aria-label", "買い切り版のご案内");
+    box.setAttribute("aria-live", "polite");
+    document.body.appendChild(box);
+    var p = document.createElement("p");
+    p.textContent = trigger === "limit"
+      ? "この先は買い切り版の機能です。パソコン用の買い切り版(¥100・税込)なら:"
+      : "うまくできましたか? パソコン用の買い切り版(¥100・税込)なら、さらに:";
+    var ul = document.createElement("ul");
+    list.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+    var a = document.createElement("a");
+    a.className = "upsell-go";
+    a.id = "upsellToastLink";
+    a.href = buy.href;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = "BOOTHで見る(新しいタブ)";
+    var bg = getComputedStyle(buy).backgroundColor;
+    if (bg && !/rgba?\(0, 0, 0, 0\)|transparent/.test(bg)) a.style.background = bg;
+    var x = document.createElement("button");
+    x.type = "button";
+    x.className = "upsell-x";
+    x.setAttribute("aria-label", "この案内を閉じる");
+    x.textContent = "×";
+    function close(remember) {
+      if (box.parentNode) box.parentNode.removeChild(box);
+      document.removeEventListener("keydown", onKey);
+      if (remember) store(KEY_CLOSED, String(Date.now() + 7 * 864e5));
+    }
+    // Escはページ側の操作(選択解除など)にも使われるので、案内の中にフォーカスがある時だけ閉じる
+    function onKey(e) { if (e.key === "Escape" && box.contains(document.activeElement)) close(true); }
+    x.addEventListener("click", function () { close(true); });
+    a.addEventListener("click", function () { setTimeout(function () { close(false); }, 0); });
+    document.addEventListener("keydown", onKey);
+    setTimeout(function () {
+      var note = document.createElement("small");
+      note.className = "upsell-note";
+      note.textContent = "スマホではファイルを開けない機種があります";
+      box.appendChild(x); box.appendChild(p); box.appendChild(ul); box.appendChild(a); box.appendChild(note);
+    }, 50);
+    gtagEv("upsell_show", { trigger: trigger });
+  }
+
+  // 保存・コピー・印刷・書き出しを押した直後(結果を受け取れたタイミング)
+  var OK = /保存|コピー|印刷|書き出|ダウンロード|共有|PDF/;
+  var NG = /読み込|リセット|消|削除|このブラウザに保存|確認|イメージを見る|戻/;
+  document.addEventListener("click", function (e) {
+    var el = e.target && e.target.closest ? e.target.closest("button, a[download], input[type=button], input[type=submit]") : null;
+    if (!el || el.closest("#pro-section, .upsell-toast, #anshin")) return;
+    var label = (el.textContent || el.value || "").replace(/\s+/g, " ");
+    if (!OK.test(label) || NG.test(label)) return;
+    setTimeout(function () { show("action"); }, 1500);
+  }, true);
+
+  // 無料版の上限まわり
+  // (1) ページが出す「買い切り版」の一文に、購入欄へのリンクを足す(スマホでも)。🔒のタブは薄く表示されているので入れない
+  // (2) 案内(パソコンのみ)は、はっきりした合図のときだけ出す: 🔒のクリック・買い切り版にふれたalert・
+  //     初めて出た「〜まで/のみ/以降/入っていません」の上限の一文(計算のたびに出る誘導文や、同じ文の描き直しでは出さない)
+  var SKIP = "#pro-section, .upsell-toast, .upsell-top, #anshin, a, button, label, select, option, h1, h2, h3, .badge, header, footer, nav, textarea, pre, code, [contenteditable], svg";
+  var LIMIT = /まで|のみ|以降|入っていません/;
+  var seenText = {}, ready = false;
+  function goPro(e) {
+    if (e) e.preventDefault();
+    pro.setAttribute("tabindex", "-1");
+    pro.scrollIntoView({ behavior: "smooth", block: "start" });
+    pro.focus({ preventScroll: true });
+  }
+  function linkify(root, deep) {
+    var limitHit = false;
+    var els = root.matches("p, div, span, li") ? [root] : [];
+    if (deep) els = els.concat([].slice.call(root.querySelectorAll("p, div, span, li")));
+    els.forEach(function (el) {
+      if (el.closest(SKIP) || el.closest('[role="radio"], [role="option"], [role="tab"], [role="button"], [tabindex]:not([tabindex="-1"])') || el.querySelector("a, button, p, div, li, input, label")) return;
+      // 選択肢の「○○(買い切り版)」ではなく、文として買い切り版にふれている要素だけ
+      var own = "";
+      for (var n = el.firstChild; n; n = n.nodeType === 1 && n.className === "upsell-inline" ? null : n.nextSibling) if (n.nodeType === 3) own += n.nodeValue;
+      own = own.trim();
+      if (own.indexOf("買い切り版") < 0 || /[((]買い切り版[))]$/.test(own) || /^🔒/.test(own)) return;
+      var key = own.replace(/\d+/g, "#");
+      if (ready && !seenText[key] && LIMIT.test(own) && !el.closest(".teaser, #teaser, [id$=teaser], #tz")) limitHit = true;
+      seenText[key] = 1;
+      if (el.querySelector(".upsell-inline")) return;
+      var a = document.createElement("a");
+      a.className = "upsell-inline";
+      a.href = "#pro-section";
+      a.setAttribute("aria-label", "くわしく:買い切り版の説明へ移動");
+      a.textContent = "くわしく";
+      var ar = document.createElement("span");
+      ar.setAttribute("aria-hidden", "true");
+      ar.textContent = " ↓";
+      a.appendChild(ar);
+      a.addEventListener("click", goPro);
+      el.appendChild(document.createTextNode(" "));
+      el.appendChild(a);
+    });
+    return limitHit;
+  }
+  linkify(document.body, true);
+  setTimeout(function () { ready = true; }, 1500);
+  var topLink = document.querySelector("#upsellTop a");
+  if (topLink) topLink.addEventListener("click", goPro);
+  new MutationObserver(function (ms) {
+    // 変わったところだけを調べる(足された要素はその中も、文字の変更は親要素だけ)
+    var hit = false, done = new Set();
+    function check(t, deep) {
+      if (!t || t.nodeType !== 1 || done.has(t) || t.closest(".upsell-toast")) return;
+      done.add(t);
+      if (linkify(t, deep)) hit = true;
+    }
+    ms.forEach(function (m) {
+      if (m.type === "characterData") { check(m.target.parentNode, false); return; }
+      check(m.target, false);
+      for (var i = 0; i < m.addedNodes.length; i++) if (m.addedNodes[i].nodeType === 1) check(m.addedNodes[i], true);
+    });
+    if (hit) setTimeout(function () { show("limit"); }, 800);
+  }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  document.addEventListener("click", function (e) {
+    var el = e.target && e.target.closest ? e.target.closest("button, div, span, li") : null;
+    var first = el && el.firstChild && el.firstChild.nodeType === 3 ? el.firstChild.nodeValue : "";
+    if (!/^\s*🔒/.test(first) || e.target.closest("#pro-section")) return;
+    if (pc) setTimeout(function () { show("limit"); }, 300); else goPro();
+  }, true);
+  var origAlert = window.alert;
+  window.alert = function (msg) {
+    var r = origAlert.apply(window, arguments);
+    if (/買い切り版/.test(String(msg))) setTimeout(function () { show("limit"); }, 300);
+    return r;
+  };
+})();
+</script>
+<!--UPSELL_JS_END-->
+</body>
+</html>
